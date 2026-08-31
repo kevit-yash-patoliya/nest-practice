@@ -1,18 +1,22 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import chalk from "chalk";
+import { ROLES_KEY } from "../constants/common";
 
 @Injectable()
-export class RoleGuard implements CanActivate{
-    constructor(private reflector: Reflector){}
+export class RoleGuard implements CanActivate {
+    constructor(private reflector: Reflector) { }
     canActivate(context: ExecutionContext): boolean | Promise<boolean> {
-        const roles = this.reflector.getAllAndMerge<string[]>('roles', [context.getHandler(),context.getClass()]);
-        console.log(chalk.blue("Roles from decorator", roles))
-        if(!roles){
+        const roles = this.reflector.getAllAndMerge<string[]>(ROLES_KEY, [context.getHandler(), context.getClass()]);
+        if (!roles.length) {
             return true;
         }
         const request = context.switchToHttp().getRequest();
-        const response = context.switchToHttp().getResponse();
+        const userRole = request.user?.role;
+
+        if (!userRole || !roles.includes(userRole)) {
+            throw new ForbiddenException('Insufficient role');
+        }
+
         return true;
     }
 }

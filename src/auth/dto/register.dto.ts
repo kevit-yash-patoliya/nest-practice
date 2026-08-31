@@ -5,13 +5,13 @@ export class RegisterDto{
     @ApiProperty({example:"admin"})
     @IsString()
     @Length(3,10)
-    username:string;
+    username!:string;
     @ApiProperty({example:"[EMAIL_ADDRESS]"})
     @IsEmail()
-    email:string;
+    email!:string;
     @ApiProperty({example:"1234"})
     @IsString()
-    password:string;
+    password!:string;
     @ApiProperty({example:"user"})
     role?:string;
 }
