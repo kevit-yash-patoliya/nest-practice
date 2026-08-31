@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Inject, Logger, Param, ParseArrayPipe, ParseBoolPipe, ParseIntPipe, Post, UploadedFile, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Role } from 'src/common/enums/role';
@@ -41,7 +41,7 @@ export class UserController {
     // @UseInterceptors(CacheInterceptor)
     @UseInterceptors(TestingInterceptors)
     @Post('/')
-    @UseGuards(AuthGuard('jwt'), RoleGuard)
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @Roles(Role.Admin)
     // @UseInterceptors(Delay)
     @UseFilters(HttpExceptionFilter)

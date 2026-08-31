@@ -14,6 +14,7 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import type { Request } from 'express';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -42,13 +43,13 @@ export class AuthController {
         return { token };
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Get('profile')
     getProfile(@Req() req) {
         return req.user;
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Post('logout')
     async logout(@Req() req: Request) {
         const authHeader = req.headers['authorization'];

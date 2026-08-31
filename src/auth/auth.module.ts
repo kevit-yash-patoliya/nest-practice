@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/passport-local';
-import { JwtStrategy } from './strategies/jwt-strategy';
 import { GoogleStrategy } from './strategies/google-strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from 'src/user/user.module';
@@ -11,10 +10,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/register.schema';
 import { Token, TokenSchema } from './schemas/token.schema';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy, AuthRepo],
+  providers: [AuthService, LocalStrategy, GoogleStrategy, AuthRepo, JwtAuthGuard],
   imports: [
     JwtModule.register({
       secret: 'secretKey',
@@ -27,9 +27,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     ]),
     EventEmitterModule.forRoot(),
   ],
-  exports: [AuthService],
+  exports: [AuthService, JwtAuthGuard],
 })
 export class AuthModule {}
+
 
 
 
